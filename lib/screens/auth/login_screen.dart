@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../main.dart';
 import '../../helper/dialogs.dart';
+import '../../api/apis.dart';
 
 import '../home_screen.dart';
 
@@ -64,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+      return await APIs.auth.signInWithCredential(credential);
     } catch (error) {
       log('\n_signInWithGoogle: $error');
       Dialogs.showSnackBar(context, 'Something went wrong! (Check internet)');
