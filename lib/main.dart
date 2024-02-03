@@ -46,15 +46,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.lightBlue[200],
         ),
       ),
-      // home: const HomeScreen(),
       home: const SplashScreen(),
     );
   }
 }
-
-/*
-Platform  Firebase App Id
-web       1:367989657233:web:7f383fd6d3db06fb5af930
-android   1:367989657233:android:e82020d1f2fcc4c25af930
-ios       1:367989657233:ios:d34933c507eb035a5af930
-*/

@@ -70,6 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '367989657233',
     projectId: 'wechat-dc936',
     storageBucket: 'wechat-dc936.appspot.com',
+    androidClientId: '367989657233-hrjctk2tpesq09d8hetecj2ltce7rbll.apps.googleusercontent.com',
+    iosClientId: '367989657233-1tb8despriu3o6pe85hv23e2hfolnvf9.apps.googleusercontent.com',
     iosBundleId: 'com.example.weChat',
   );
 }

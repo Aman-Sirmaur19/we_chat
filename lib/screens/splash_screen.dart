@@ -1,9 +1,13 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../main.dart';
 
 import './auth/login_screen.dart';
+import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,13 +24,23 @@ class _SplashScreenState extends State<SplashScreen> {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+
+      if (FirebaseAuth.instance.currentUser != null) {
+        log('\nUser: ${FirebaseAuth.instance.currentUser}');
+        // navigate to home screen
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+      } else {
+        // navigate to login screen
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // initializing mediaQuery for getting device screen size
     mq = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -75,15 +89,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: 'MADE IN ',
-                    style: TextStyle(color: Colors.black45),
-                  ),
-                  TextSpan(text: '🇮🇳'),
-                  TextSpan(
-                    text: ' WITH ',
+                    text: 'MADE WITH ',
                     style: TextStyle(color: Colors.black45),
                   ),
                   TextSpan(text: '❤️'),
+                  TextSpan(
+                    text: ' IN ',
+                    style: TextStyle(color: Colors.black45),
+                  ),
+                  TextSpan(text: '🇮🇳'),
                 ],
               ),
             ),
