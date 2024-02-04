@@ -4,7 +4,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../api/apis.dart';
 
+import '../main.dart';
 import './auth/login_screen.dart';
+import '../widgets/chat_user_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,13 +36,22 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(10.0),
         child: FloatingActionButton(
-          child: Icon(CupertinoIcons.add),
+          child: const Icon(CupertinoIcons.add),
           onPressed: () async {
             await APIs.auth.signOut();
             await GoogleSignIn().signOut();
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (_) => LoginScreen()));
           },
         ),
+      ),
+      body: ListView.builder(
+        padding: EdgeInsets.only(top: mq.height * .01),
+        physics: const BouncingScrollPhysics(),
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return const ChatUserCard();
+        },
       ),
     );
   }
