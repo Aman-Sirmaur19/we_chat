@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../main.dart';
-import './auth/login_screen.dart';
 import '../widgets/chat_user_card.dart';
 import '../api/apis.dart';
 import '../models/chat_user.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,22 +28,42 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(CupertinoIcons.search),
             onPressed: () {},
           ),
-          IconButton(
+          PopupMenuButton(
             icon: const Icon(CupertinoIcons.ellipsis_vertical),
-            onPressed: () {},
+            onSelected: (value) {
+              if (value == 'My Profile') {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ProfileScreen(user: list[0])));
+              }
+            },
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem(
+                  value: 'My Profile',
+                  child: ListTile(
+                      leading: Icon(CupertinoIcons.person),
+                      title: Text('My Profile')),
+                ),
+                const PopupMenuItem(
+                  value: 'Settings',
+                  child: ListTile(
+                    leading: Icon(CupertinoIcons.gear),
+                    title: Text('Settings'),
+                  ),
+                ),
+              ];
+            },
           ),
         ],
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: FloatingActionButton(
-          child: const Icon(CupertinoIcons.add),
-          onPressed: () async {
-            await APIs.auth.signOut();
-            await GoogleSignIn().signOut();
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (_) => LoginScreen()));
-          },
+        child: FloatingActionButton.extended(
+          icon: const Icon(CupertinoIcons.add),
+          onPressed: () {},
+          label: const Text('Add user'),
         ),
       ),
       body: StreamBuilder(
@@ -70,29 +89,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: list.length,
                   itemBuilder: (context, index) {
                     return ChatUserCard(user: list[index]);
-                    // return Text('Name: ${list[index]}');
                   },
                 );
               } else {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'No connections found!',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black.withOpacity(.68),
-                          ),
+                    children: [
+                      Text(
+                        'No connections found!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.68),
                         ),
-                        SizedBox(height: mq.height * .05),
-                        Image.asset(
-                          'assets/images/waiting.png',
-                          height: mq.height * .3,
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: mq.height * .05),
+                      Image.asset(
+                        'assets/images/waiting.png',
+                        height: mq.height * .3,
+                      ),
+                    ],
+                  ),
                 );
               }
           }
