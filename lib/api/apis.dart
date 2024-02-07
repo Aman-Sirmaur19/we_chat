@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:we_chat/models/chat_user.dart';
@@ -9,6 +11,9 @@ class APIs {
   // for accessing cloud firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  // for storing self info
+  static late ChatUser me;
+
   static User get user => auth.currentUser!;
 
   // for checking if user exists or not?
@@ -18,6 +23,22 @@ class APIs {
             .doc(auth.currentUser!.uid)
             .get())
         .exists;
+  }
+
+  // for getting current user info
+  static Future<void> getSelfInfo() async {
+    await firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .get()
+        .then((user) async {
+      if (user.exists) {
+        me = ChatUser.fromJson(user.data()!);
+        log('My Data: ${user.data()}');
+      } else {
+        await createUser().then((value) => getSelfInfo());
+      }
+    });
   }
 
   // for creating a new user
@@ -40,5 +61,13 @@ class APIs {
         .collection('users')
         .doc(user.uid)
         .set(chatUser.toJson());
+  }
+
+  // for getting all users from firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+    return firestore
+        .collection('users')
+        .where('id', isNotEqualTo: user.uid)
+        .snapshots();
   }
 }
