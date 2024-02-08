@@ -20,6 +20,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -80,84 +82,102 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: mq.width * .05),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(width: mq.width, height: mq.height * .03),
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(mq.height * .075),
-                      child: CachedNetworkImage(
-                        width: mq.height * .15,
-                        height: mq.height * .15,
-                        fit: BoxFit.fill,
-                        imageUrl: widget.user.image,
-                        errorWidget: (context, url, error) =>
-                            const CircleAvatar(
-                                child: Icon(CupertinoIcons.person)),
+        body: Form(
+          key: _formKey,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: mq.width * .05),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(width: mq.width, height: mq.height * .03),
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(mq.height * .075),
+                        child: CachedNetworkImage(
+                          width: mq.height * .15,
+                          height: mq.height * .15,
+                          fit: BoxFit.fill,
+                          imageUrl: widget.user.image,
+                          errorWidget: (context, url, error) =>
+                              const CircleAvatar(
+                                  child: Icon(CupertinoIcons.person)),
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 65,
-                      child: MaterialButton(
-                        onPressed: () {},
-                        elevation: 1,
-                        shape: const CircleBorder(),
-                        color: Colors.lightBlue.shade50,
-                        child: const Icon(Icons.edit, color: Colors.lightBlue),
+                      Positioned(
+                        bottom: 0,
+                        left: 65,
+                        child: MaterialButton(
+                          onPressed: () {},
+                          elevation: 1,
+                          shape: const CircleBorder(),
+                          color: Colors.lightBlue.shade50,
+                          child:
+                              const Icon(Icons.edit, color: Colors.lightBlue),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: mq.height * .02),
-                Text(
-                  widget.user.email,
-                  style: const TextStyle(color: Colors.black54),
-                ),
-                SizedBox(height: mq.height * .05),
-                TextFormField(
-                  initialValue: widget.user.name,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(
-                      CupertinoIcons.person,
-                      color: Colors.lightBlue,
-                    ),
-                    labelText: 'Name',
-                    hintText: 'eg. Aman Sirmaur',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15)),
+                    ],
                   ),
-                ),
-                SizedBox(height: mq.height * .02),
-                TextFormField(
-                  initialValue: widget.user.about,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(
-                      CupertinoIcons.pencil_ellipsis_rectangle,
-                      color: Colors.lightBlue,
+                  SizedBox(height: mq.height * .02),
+                  Text(
+                    widget.user.email,
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                  SizedBox(height: mq.height * .05),
+                  TextFormField(
+                    initialValue: widget.user.name,
+                    onSaved: (val) => APIs.me.name = val ?? '',
+                    validator: (val) =>
+                        val != null && val.isNotEmpty ? null : 'Required Field',
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(
+                        CupertinoIcons.person,
+                        color: Colors.lightBlue,
+                      ),
+                      labelText: 'Name',
+                      hintText: 'eg. Aman Sirmaur',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)),
                     ),
-                    labelText: 'About',
-                    hintText: 'eg. Feeling Happy!',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15)),
                   ),
-                ),
-                SizedBox(height: mq.height * .02),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    shape: const StadiumBorder(),
-                    backgroundColor: Colors.lightBlue.shade50,
-                    fixedSize: Size(mq.width * .35, mq.height * .05),
+                  SizedBox(height: mq.height * .02),
+                  TextFormField(
+                    initialValue: widget.user.about,
+                    onSaved: (val) => APIs.me.about = val ?? '',
+                    validator: (val) =>
+                        val != null && val.isNotEmpty ? null : 'Required Field',
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(
+                        CupertinoIcons.pencil_ellipsis_rectangle,
+                        color: Colors.lightBlue,
+                      ),
+                      labelText: 'About',
+                      hintText: 'eg. Feeling Happy!',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                    ),
                   ),
-                  icon: const Icon(Icons.edit_note_outlined),
-                  label: const Text('Update'),
-                  onPressed: () {},
-                )
-              ],
+                  SizedBox(height: mq.height * .02),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      shape: const StadiumBorder(),
+                      backgroundColor: Colors.lightBlue.shade50,
+                      fixedSize: Size(mq.width * .35, mq.height * .05),
+                    ),
+                    icon: const Icon(Icons.edit_note_outlined),
+                    label: const Text('Update'),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        APIs.updateUserInfo().then((value) {
+                          Dialogs.showUpdateSnackBar(
+                              context, 'Profile Updated Successfully!');
+                        });
+                      }
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),
