@@ -108,7 +108,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         bottom: 0,
                         left: 65,
                         child: MaterialButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showBottomSheet();
+                          },
                           elevation: 1,
                           shape: const CircleBorder(),
                           color: Colors.lightBlue.shade50,
@@ -181,8 +183,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-        // body: ,
       ),
     );
+  }
+
+  // bottom sheet for picking a profile picture for user
+  void _showBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        )),
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(
+              top: mq.height * .03,
+              bottom: mq.height * .07,
+            ),
+            children: [
+              const Text(
+                'Pick Profile Picture',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: const CircleBorder(),
+                          fixedSize: Size(mq.width * .3, mq.height * .15),
+                        ),
+                        child: Image.asset('assets/images/add_image.png'),
+                        onPressed: () {},
+                      ),
+                      const Text(
+                        'Gallery',
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: const CircleBorder(),
+                          fixedSize: Size(mq.width * .3, mq.height * .15),
+                        ),
+                        child: Image.asset('assets/images/camera.png'),
+                        onPressed: () {},
+                      ),
+                      const Text(
+                        'Camera',
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }
