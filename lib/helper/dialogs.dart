@@ -20,11 +20,11 @@ class Dialogs {
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(msg, style: const TextStyle(color: Colors.black54)),
+            Text(msg, style: const TextStyle(letterSpacing: 1)),
             const Icon(Icons.check_circle, color: Colors.green),
           ],
         ),
-        backgroundColor: Colors.lightBlue.shade50,
+        backgroundColor: Colors.black87,
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
       ),
