@@ -193,6 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
+                        APIs.updateProfilePicture(File(_image!));
                         APIs.updateUserInfo().then((value) {
                           Dialogs.showUpdateSnackBar(
                               context, 'Profile Updated Successfully!');
@@ -250,12 +251,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Pick an image.
                           final ImagePicker picker = ImagePicker();
                           final XFile? image = await picker.pickImage(
-                              source: ImageSource.gallery);
+                              source: ImageSource.gallery, imageQuality: 20);
                           if (image != null) {
                             log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
                             setState(() {
                               _image = image.path;
                             });
+                            // APIs.updateProfilePicture(File(_image!));
                             // for hiding botton sheet
                             Navigator.pop(context);
                           }
@@ -280,12 +282,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Capture an image.
                           final ImagePicker picker = ImagePicker();
                           final XFile? image = await picker.pickImage(
-                              source: ImageSource.camera);
+                              source: ImageSource.camera, imageQuality: 20);
                           if (image != null) {
                             log('Image Path: ${image.path}');
                             setState(() {
                               _image = image.path;
                             });
+                            // APIs.updateProfilePicture(File(_image!));
                             // for hiding botton sheet
                             Navigator.pop(context);
                           }
