@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../models/chat_user.dart';
+import '../screens/chat_screen.dart';
 
 class ChatUserCard extends StatefulWidget {
   final ChatUser user;
@@ -24,7 +25,12 @@ class _ChatUserCardState extends State<ChatUserCard> {
       elevation: 1,
       child: InkWell(
         borderRadius: BorderRadius.circular(15),
-        onTap: () {},
+
+        // for navigating to chat screen
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => ChatScreen(user: widget.user)));
+        },
         child: ListTile(
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(mq.height * .025),
