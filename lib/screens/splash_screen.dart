@@ -20,27 +20,30 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        // for bottom navigation bar button type
-        statusBarColor: Colors.transparent,
+    Future.delayed(
+      const Duration(seconds: 3),
+      () {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          // for bottom navigation bar button type
+          statusBarColor: Colors.transparent,
 
-        // for bottom navigation bar without button type
-        // systemNavigationBarColor: Colors.transparent,
-      ));
+          // for bottom navigation bar without button type
+          // systemNavigationBarColor: Colors.transparent,
+        ));
 
-      if (APIs.auth.currentUser != null) {
-        log('\nUser: ${APIs.auth.currentUser}');
-        // navigate to home screen
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
-      } else {
-        // navigate to login screen
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => const LoginScreen()));
-      }
-    });
+        if (APIs.auth.currentUser != null) {
+          log('\nUser: ${APIs.auth.currentUser}');
+          // navigate to home screen
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        } else {
+          // navigate to login screen
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+        }
+      },
+    );
   }
 
   @override
