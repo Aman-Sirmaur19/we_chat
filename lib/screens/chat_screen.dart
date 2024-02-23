@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../main.dart';
 import '../models/chat_user.dart';
+import '../models/message.dart';
+import '../api/apis.dart';
+import '../widgets/message_card.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user;
@@ -15,6 +21,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  // for storing all messages
+  List<Message> _list = [];
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -71,29 +80,44 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
-        body: Container(
+        backgroundColor: const Color.fromRGBO(255, 254, 229, 1),
+        body: SizedBox(
           height: mq.height * .85,
           child: Column(
             children: [
               Expanded(
                 child: StreamBuilder(
-                  stream: null,
+                  stream: APIs.getAllMessages(),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       // if data is loading
                       case ConnectionState.waiting:
                       case ConnectionState.none:
-                      // return const Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
 
                       // if data is loaded then show it
                       case ConnectionState.active:
                       case ConnectionState.done:
-                        // final data = snapshot.data?.docs;
+                        final data = snapshot.data?.docs;
+                        log('Data: ${jsonEncode(data![0].data())}');
                         // _list =
                         //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
                         //         [];
-
-                        final _list = [];
+                        _list.clear();
+                        _list.add(Message(
+                            msg: 'Hi!',
+                            toId: 'xyz',
+                            read: '',
+                            type: Type.text,
+                            sent: '12:00 AM',
+                            fromId: APIs.user.uid));
+                        _list.add(Message(
+                            msg: 'Hello!',
+                            toId: APIs.user.uid,
+                            read: '',
+                            type: Type.text,
+                            sent: '12:05 AM',
+                            fromId: 'xyz'));
 
                         if (_list.isNotEmpty) {
                           return ListView.builder(
@@ -101,7 +125,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             physics: const BouncingScrollPhysics(),
                             itemCount: _list.length,
                             itemBuilder: (context, index) {
-                              return Text('Message: ${_list[index]}');
+                              return MessageCard(message: _list[index]);
                             },
                           );
                         } else {
