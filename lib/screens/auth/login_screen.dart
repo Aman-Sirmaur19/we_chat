@@ -96,6 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
         automaticallyImplyLeading: false,
         title: const Text('Welcome to WeChat!'),
       ),
+      backgroundColor: const Color.fromARGB(255, 218, 241, 253),
       body: Stack(
         children: [
           Positioned(

@@ -24,6 +24,9 @@ class _ChatScreenState extends State<ChatScreen> {
   // for storing all messages
   List<Message> _list = [];
 
+  // for handling message text changes
+  final _textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -87,38 +90,22 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Expanded(
                 child: StreamBuilder(
-                  stream: APIs.getAllMessages(),
+                  stream: APIs.getAllMessages(widget.user),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       // if data is loading
                       case ConnectionState.waiting:
                       case ConnectionState.none:
-                        return const Center(child: CircularProgressIndicator());
+                      // return const SizedBox();
 
                       // if data is loaded then show it
                       case ConnectionState.active:
                       case ConnectionState.done:
                         final data = snapshot.data?.docs;
-                        log('Data: ${jsonEncode(data![0].data())}');
-                        // _list =
-                        //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
-                        //         [];
-                        _list.clear();
-                        _list.add(Message(
-                            msg: 'Hi!',
-                            toId: 'xyz',
-                            read: '',
-                            type: Type.text,
-                            sent: '12:00 AM',
-                            fromId: APIs.user.uid));
-                        _list.add(Message(
-                            msg: 'Hello!',
-                            toId: APIs.user.uid,
-                            read: '',
-                            type: Type.text,
-                            sent: '12:05 AM',
-                            fromId: 'xyz'));
-
+                        _list = data
+                                ?.map((e) => Message.fromJson(e.data()))
+                                .toList() ??
+                            [];
                         if (_list.isNotEmpty) {
                           return ListView.builder(
                             padding: EdgeInsets.only(top: mq.height * .01),
@@ -173,11 +160,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     onPressed: () {},
                   ),
-                  const Expanded(
+                  Expanded(
                     child: TextField(
+                      controller: _textController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Send message...',
                         border: InputBorder.none,
                       ),
@@ -204,7 +192,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
           // send message button
           MaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_textController.text.isNotEmpty) {
+                APIs.sendMessage(widget.user, _textController.text);
+                _textController.text = '';
+              }
+            },
             minWidth: 0,
             padding: const EdgeInsets.only(
               right: 5,
