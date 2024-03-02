@@ -193,7 +193,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        APIs.updateProfilePicture(File(_image!));
+                        if (_image != null) {
+                          APIs.updateProfilePicture(File(_image!));
+                        }
                         APIs.updateUserInfo().then((value) {
                           Dialogs.showUpdateSnackBar(
                               context, 'Profile Updated Successfully!');
