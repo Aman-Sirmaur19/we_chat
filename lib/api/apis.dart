@@ -145,4 +145,22 @@ class APIs {
         .collection('chats/${getConversationId(receiver.id)}/messages/');
     await ref.doc(time).set(message.toJson());
   }
+
+  // update read status of sent message
+  static Future<void> updateMessageStatus(Message message) async {
+    firestore
+        .collection('chats/${getConversationId(message.fromId)}/messages/')
+        .doc(message.sent)
+        .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
+  }
+
+  // get only last message of a specific chat
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessages(
+      ChatUser user) {
+    return firestore
+        .collection('chats/${getConversationId(user.id)}/messages/')
+        .orderBy('sent', descending: true)
+        .limit(1)
+        .snapshots();
+  }
 }

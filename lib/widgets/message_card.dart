@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:we_chat/helper/my_date_util.dart';
 
 import '../main.dart';
 import '../models/message.dart';
@@ -15,17 +16,6 @@ class MessageCard extends StatefulWidget {
 }
 
 class _MessageCardState extends State<MessageCard> {
-  late double _size;
-
-  @override
-  void initState() {
-    super.initState();
-    _size = widget.message.msg.length * .026;
-    if (_size < .2) {
-      _size = .2;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return APIs.user.uid == widget.message.fromId
@@ -35,17 +25,16 @@ class _MessageCardState extends State<MessageCard> {
 
   // sender or another user message
   Widget _blueMessage() {
-    return Flexible(
-      child: Row(
-        children: [
-          Container(
-            constraints: BoxConstraints(
-                minWidth: widget.message.msg.length > 15
-                    ? mq.width * .2
-                    : mq.width * _size,
-                maxWidth: widget.message.msg.length > 15
-                    ? mq.width * .4
-                    : mq.width * _size),
+    // update last read message if sender and receiver are different
+    if (widget.message.read.isEmpty) {
+      APIs.updateMessageStatus(widget.message);
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(
+          child: Container(
             padding: EdgeInsets.all(mq.width * .03),
             margin: EdgeInsets.symmetric(
                 horizontal: mq.width * .03, vertical: mq.height * .01),
@@ -57,28 +46,21 @@ class _MessageCardState extends State<MessageCard> {
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 )),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.message.msg,
-                  style: const TextStyle(fontSize: 15, color: Colors.black87),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${widget.message.sent} ',
-                      style:
-                          const TextStyle(fontSize: 10, color: Colors.black54),
-                    ),
-                  ],
-                ),
-              ],
+            child: Text(
+              widget.message.msg,
+              style: const TextStyle(fontSize: 15, color: Colors.black87),
             ),
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(right: mq.width * .03),
+          child: Text(
+            MyDateUtil.getFormattedTime(
+                context: context, time: widget.message.sent),
+            style: const TextStyle(fontSize: 10, color: Colors.black54),
+          ),
+        ),
+      ],
     );
   }
 
@@ -91,11 +73,18 @@ class _MessageCardState extends State<MessageCard> {
           padding: EdgeInsets.only(left: mq.width * .03),
           child: Row(
             children: [
+              // sent time
               Text(
-                '${widget.message.sent} ',
+                MyDateUtil.getFormattedTime(
+                    context: context, time: widget.message.sent),
                 style: const TextStyle(fontSize: 10, color: Colors.black54),
               ),
-              const Icon(Icons.done_all_rounded, size: 15, color: Colors.blue),
+              const Text(' '),
+
+              // double tick blue icon for message read
+              if (widget.message.read.isNotEmpty)
+                const Icon(Icons.done_all_rounded,
+                    size: 15, color: Colors.blue),
             ],
           ),
         ),

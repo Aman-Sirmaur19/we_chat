@@ -37,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: const Text('My Profile'),
           actions: [
             IconButton(
-              icon: const Icon(Icons.logout, color: Colors.redAccent),
+              icon: const Icon(Icons.logout, color: Colors.red),
               onPressed: () => showDialog(
                   context: context,
                   builder: (context) {
